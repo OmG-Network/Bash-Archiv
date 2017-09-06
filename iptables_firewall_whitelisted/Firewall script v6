@@ -1,0 +1,76 @@
+#!bin/bash
+# About: Firewall Regeln fuer ip6tables
+#Flush Chain
+ip6tables -F
+ip6tables -t nat -F
+ip6tables -t mangle -F
+ip6tables -X
+ip6tables -t nat -X
+ip6tables -t mangle -X
+
+ip6tables -P INPUT DROP
+ip6tables -P OUTPUT ACCEPT
+ip6tables -P FORWARD DROP
+
+
+#Cloudflare
+ip6tables -N CLOUDFLARE
+ip6tables -A CLOUDFLARE -s 2400:cb00::/32 -j ACCEPT
+ip6tables -A CLOUDFLARE -s 2405:8100::/32 -j ACCEPT
+ip6tables -A CLOUDFLARE -s 2405:b500::/32 -j ACCEPT
+ip6tables -A CLOUDFLARE -s 2606:4700::/32 -j ACCEPT
+ip6tables -A CLOUDFLARE -s 2803:f800::/32 -j ACCEPT
+ip6tables -A CLOUDFLARE -s 2c0f:f248::/32 -j ACCEPT
+ip6tables -A CLOUDFLARE -s 2a06:98c0::/29 -j ACCEPT
+ip6tables -A CLOUDFLARE -j RETURN
+
+# DoS PREVENTION
+ip6tables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+ip6tables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
+ip6tables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
+ip6tables -A DENY -p tcp -m tcp -m limit --limit 30/sec --limit-burst 100 -m comment --comment "Anti-DoS" -j REJECT --reject-with tcp-reset
+ip6tables -A DENY -m limit --limit 30/sec --limit-burst 100 -m comment --comment "Anti-DoS" -j REJECT --reject-with icmp-proto-unreachable
+ip6tables -A INPUT -f -j DROP
+ip6tables -A DENY -m comment --comment "Alles andere ignorieren" -j DROP
+
+ip6tables -N BLACKLIST
+ip6tables -A BLACKLIST -m recent --name portscan --rcheck --seconds 86400 -j DROP
+ip6tables -A BLACKLIST -j RETURN
+
+# SERVICES 
+ip6tables -N SERVICES
+#DNS
+ip6tables -A SERVICES -p tcp -m tcp --dport 53 -m comment --comment "Erlaube: DNS" -j ACCEPT
+ip6tables -A SERVICES -p udp -m udp --dport 53 -m comment --comment "Erlaube: DNS" -j ACCEPT
+#FTP/FTPS
+ip6tables -A SERVICES -p tcp -m tcp --dport 21 -m comment --comment "Erlaube: FTP/FTPS" -j ACCEPT
+#SSH
+ip6tables -A SERVICES -p tcp -m tcp --dport 567 -m comment --comment "Erlaube: SSH-Zugriff" -j ACCEPT
+#HTTP/HTTPS
+ip6tables -A SERVICES -p tcp -m tcp --dport 80 -m comment --comment "Erlaube: HTTP" -j ACCEPT
+ip6tables -A SERVICES -p tcp -m tcp --dport 443 -m comment --comment "Erlaube: HTTPS" -j ACCEPT
+#HTTP SERVICES
+
+#Plex Media Server
+ip6tables -A SERVICES -p tcp -m tcp --dport 32400 -m comment --comment "Erlaube: PMS" -j ACCEPT
+
+ip6tables -A SERVICES -j RETURN
+
+# TEAMSPEAK / TSDNS
+ip6tables -N TEAMSPEAK
+ip6tables -A TEAMSPEAK -p tcp -m tcp --dport 2008 -m comment --comment "Erlaube: TeamSpeak Accounting" -j ACCEPT
+ip6tables -A TEAMSPEAK -p udp -m udp --dport 9980:9989 -m comment --comment "Erlaube: TeamSpeak Voiceport Private" -j ACCEPT
+ip6tables -A TEAMSPEAK -p udp -m udp --dport 10100:11000 -m comment --comment "Erlaube: TeamSpeak Voiceport Public" -j ACCEPT
+ip6tables -A TEAMSPEAK -p tcp -m tcp --dport 30033 -m comment --comment "Erlaube: TeamSpeak Avatar Private" -j ACCEPT
+ip6tables -A TEAMSPEAK -p tcp -m tcp --dport 10001 -m comment --comment "Erlaube: TeamSpeak Avatar Public" -j ACCEPT
+ip6tables -A TEAMSPEAK -p tcp -m tcp --dport 41144 -m comment --comment "Erlaube: TeamSpeak TSDNS" -j ACCEPT
+ip6tables -A TEAMSPEAK -j RETURN
+
+# ACCEPT SERVICES
+ip6tables -A INPUT -i lo -m comment --comment "Erlaube: Loopback" -j ACCEPT
+ip6tables -A INPUT -m comment --comment "Erlaube Cloudflare IP" -j CLOUDFLARE
+ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -m comment --comment "Erlaube: Related und Established Verbindungen" -j ACCEPT
+ip6tables -A INPUT -m comment --comment "Erlaube Standard Dienste" -j SERVICES
+ip6tables -A INPUT -m comment --comment "Erlaube TeamSpeak Dienste" -j TEAMSPEAK
+ip6tables -A INPUT -p icmp -m comment --comment "Erlaube: ICMP" -j ACCEPT
+ip6tables -A INPUT -m comment --comment "Ignoriere alles andere" -j DENY
