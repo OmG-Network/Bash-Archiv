@@ -7,8 +7,8 @@
 # Update
 apt update && apt upgrade -y
 
-# Install monitor Software
-apt install wget git curl htop iftop python-pip -y
+# Install Software
+apt install wget git curl htop iftop glances python-pip -y
 
 # Updating PiP
 pip install -U pip && pip install speedtest-cli
