@@ -1,5 +1,7 @@
 # CSGO Cloud Server Deploy
 
+### **Dies ist noch kein fertriger Release, dieses Script richtet sich bisher nur an erfahrene User !**
+
 ## Was tut das Script ?
 
 Nach dem Start wird ein CSGO Server installiert, dabei kann man über die Variable <code>GAME_MODE</code> angeben wie der CSGO Server konfigurtiert werden soll. Das besondere daran ist, dass die Installation und konfiguration komplett unbeaufsichtigt erfolgen kann. Daher ist das Script bestens geeignet um in Cloud ungebungen eingesetzt zu werden.
