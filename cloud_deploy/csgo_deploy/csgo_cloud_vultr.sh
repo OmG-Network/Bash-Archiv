@@ -3,17 +3,6 @@
 ## Vultr Cloud CSGO Server Deploy INST
 ## 2018-01-24
 
-# Download options
-metamod="https://mms.alliedmods.net/mmsdrop/1.10/mmsource-1.10.7-git961-linux.tar.gz"
-sourcemod="https://sm.alliedmods.net/smdrop/1.8/sourcemod-1.8.0-git6040-linux.tar.gz"
-esl_cfg="http://fastdl.omg-network.de/csgo/esl.tar"
-# Install options
-steamCMD=/opt/steamcmd
-server_inst_dir=/opt/server
-install_user_name=csgo
-retry=5
-
-LSB=$(/usr/bin/lsb_release -i | awk '{ print $3 }')
 
 ############################################## Start of Script ##############################################
 function check_root ()
@@ -40,9 +29,10 @@ function check_distro ()
 function inst_req ()
 {
     # System Update
+export DEBIAN_FRONTEND=noninteractive
 apt update && apt upgrade -y
     # Install Req via APT
-apt install -y curl debconf libc6 lib32gcc1
+apt install -y curl debconf libc6 lib32gcc1 mailutils
     # Create User
     if [ ! -d $server_inst_dir ]; then
         mkdir $server_inst_dir
@@ -210,5 +200,6 @@ case "$GAME_TYPE" in
      echo "ERROR: Wrong GAME_TYPE exiting..."
     exit 1
 esac
+
 
 exit 0
