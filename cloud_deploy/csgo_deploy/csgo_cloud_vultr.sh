@@ -1,14 +1,8 @@
 #!/bin/bash
 
-## Silent CSGO Server installer
+## Vultr Cloud CSGO Server Deploy INST
 ## 2018-01-24
 
-# Game Server options
-#hostname=$1
-#sv_password=$2
-#rcon_password=$3
-#sv_setsteamaccount=$4
-#GAME_TYPE=$5    # 1vs1 / Diegel / MM (Competitive)
 # Download options
 metamod="https://mms.alliedmods.net/mmsdrop/1.10/mmsource-1.10.7-git961-linux.tar.gz"
 sourcemod="https://sm.alliedmods.net/smdrop/1.8/sourcemod-1.8.0-git6040-linux.tar.gz"
@@ -113,9 +107,9 @@ if [ -a $server_inst_dir/csgo/cfg/server.cfg ]; then
     rm $server_inst_dir/csgo/cfg/server.cfg
 fi
 echo // Base Configuration >> $server_inst_dir/csgo/cfg/server.cfg
-echo hostname $1 >> $server_inst_dir/csgo/cfg/server.cfg
-echo sv_password $2 >> $server_inst_dir/csgo/cfg/server.cfg
-echo rcon_password $3 >> $server_inst_dir/csgo/cfg/server.cfg
+echo hostname $hostname >> $server_inst_dir/csgo/cfg/server.cfg
+echo sv_password $sv_password >> $server_inst_dir/csgo/cfg/server.cfg
+echo rcon_password "$rcon_password" >> $server_inst_dir/csgo/cfg/server.cfg
 echo  >> $server_inst_dir/csgo/cfg/server.cfg
 echo // Network Configuration >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_loadingurl "https://aimb0t.husos.wtf" >> $server_inst_dir/csgo/cfg/server.cfg
@@ -123,7 +117,7 @@ echo sv_downloadurl '"http://fastdl.omg-network.de/csgo/csgo/"' >> $server_inst_
 echo sv_allowdownload 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_allowupload 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo net_maxfilesize 64 >> $server_inst_dir/csgo/cfg/server.cfg
-echo sv_setsteamaccount $4 >> $server_inst_dir/csgo/cfg/server.cfg
+echo sv_setsteamaccount $sv_setsteamaccount >> $server_inst_dir/csgo/cfg/server.cfg
 echo  >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_maxrate 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_minrate 196608 >> $server_inst_dir/csgo/cfg/server.cfg
@@ -201,7 +195,7 @@ inst_req
 inst_vanilla_cs_srv
 csgo_srv_init
 
-case "$5" in
+case "$GAME_TYPE" in
     1vs1)
      csgo_1vs1
     ;;
