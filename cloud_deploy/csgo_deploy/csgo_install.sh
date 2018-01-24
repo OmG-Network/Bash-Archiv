@@ -3,16 +3,21 @@
 ## Silent CSGO Server installer
 ## 2018-01-22
 
-# VARS sort by priority
-GAME_TYPE=      # 1vs1 / Diegel / MM (Competitive)
+# Game Server options
+GAME_TYPE=    # 1vs1 / Diegel / MM (Competitive)
+hostname=""
+sv_password=""
+rcon_password=""
+sv_setsteamaccount=""
+# Download options
+metamod="https://mms.alliedmods.net/mmsdrop/1.10/mmsource-1.10.7-git961-linux.tar.gz"
+sourcemod="https://sm.alliedmods.net/smdrop/1.8/sourcemod-1.8.0-git6040-linux.tar.gz"
+esl_cfg="http://fastdl.omg-network.de/csgo/esl.tar"
+# Install options
 steamCMD=/opt/steamcmd
 server_inst_dir=/opt/server
 install_user_name=csgo
 retry=5
-
-metamod="https://mms.alliedmods.net/mmsdrop/1.10/mmsource-1.10.7-git961-linux.tar.gz"
-sourcemod="https://sm.alliedmods.net/smdrop/1.8/sourcemod-1.8.0-git6040-linux.tar.gz"
-esl_cfg="http://fastdl.omg-network.de/csgo/esl.tar"
 
 LSB=$(/usr/bin/lsb_release -i | awk '{ print $3 }')
 
@@ -108,17 +113,17 @@ if [ -a $server_inst_dir/csgo/cfg/server.cfg ]; then
     rm $server_inst_dir/csgo/cfg/server.cfg
 fi
 echo // Base Configuration >> $server_inst_dir/csgo/cfg/server.cfg
-echo hostname "[OmG] Network" >> $server_inst_dir/csgo/cfg/server.cfg
-echo sv_password "" >> $server_inst_dir/csgo/cfg/server.cfg
-echo rcon_password "" >> $server_inst_dir/csgo/cfg/server.cfg
+echo hostname $hostname >> $server_inst_dir/csgo/cfg/server.cfg
+echo sv_password $sv_password >> $server_inst_dir/csgo/cfg/server.cfg
+echo rcon_password "$rcon_password" >> $server_inst_dir/csgo/cfg/server.cfg
 echo  >> $server_inst_dir/csgo/cfg/server.cfg
 echo // Network Configuration >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_loadingurl "https://aimb0t.husos.wtf" >> $server_inst_dir/csgo/cfg/server.cfg
-echo sv_downloadurl "http://fastdl.omg-network.de/csgo/csgo/" >> $server_inst_dir/csgo/cfg/server.cfg
+echo sv_downloadurl '"http://fastdl.omg-network.de/csgo/csgo/"' >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_allowdownload 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_allowupload 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo net_maxfilesize 64 >> $server_inst_dir/csgo/cfg/server.cfg
-echo sv_setsteamaccount  >> $server_inst_dir/csgo/cfg/server.cfg
+echo sv_setsteamaccount $sv_setsteamaccount >> $server_inst_dir/csgo/cfg/server.cfg
 echo  >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_maxrate 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_minrate 196608 >> $server_inst_dir/csgo/cfg/server.cfg
@@ -133,6 +138,8 @@ echo sv_logbans 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_logecho 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_logfile 1 >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_log_onefile 0 >> $server_inst_dir/csgo/cfg/server.cfg
+echo  >> $server_inst_dir/csgo/cfg/server.cfg
+echo mp_match_end_restart 1 >> $server_inst_dir/csgo/cfg/server.cfg
 
 # Add ESL Config files
 echo "### ADD ESL Config ###"
@@ -141,17 +148,48 @@ curl -sqL $esl_cfg | tar xf - -C $server_inst_dir/csgo/cfg/
 
 function csgo_1vs1 ()
 {
-
+# Download Maps
+echo "### DOWNLOADING CSGO Maps ###"
+wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_redline.bsp"
+wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_dust2.bsp"
+wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_map_classic.bsp"
+wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_dust_go.bsp"
+wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_map.bsp"
+wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_prac_ak47.bsp"
+# Set permissions
+echo "### SET Permissions for $install_user_name"
+chown -cR $install_user_name $server_inst_dir && chmod -cR 770 $server_inst_dir
+chmod +x $server_inst_dir/srcds_run
+# Starting CSGO Server
+echo "### STARTING CSGO Server ###"
+screen -dmS CS_1vs1 su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 +game_type 0 +game_mode 0 +map aim_redline +exec server.cfg"
 }
 
 function csgo_diegel ()
 {
+# Downloading aim_deagle7k
+wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_deagle7k.bsp"
+# Downloading only HS Plugin
+wget -P $server_inst_dir/csgo/addons/sourcemod/plugins "https://raw.githubusercontent.com/Bara/OnlyHS/master/addons/sourcemod/plugins/onlyhs.smx"
+# Set permissions
+echo "### SET Permissions for $install_user_name"
+chown -cR $install_user_name $server_inst_dir && chmod -cR 770 $server_inst_dir
+chmod +x $server_inst_dir/srcds_run
+# Starting CSGO Server
+echo "### STARTING CSGO Server ###"
+screen -dmS CS_Diegle su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 +game_type 0 +game_mode 1 +map aim_deagle7k +exec server.cfg"
 
 }
 
 function csgo_mm ()
 {
-
+# Set permissions
+echo "### SET Permissions for $install_user_name"
+chown -cR $install_user_name $server_inst_dir && chmod -cR 770 $server_inst_dir
+chmod +x $server_inst_dir/srcds_run
+# Starting CSGO Server
+echo "### STARTING CSGO Server ###"
+screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 +game_type 0 +game_mode 1 +map de_cbble +exec server.cfg"
 }
 ############################################## End of Functions ##############################################
 
@@ -163,18 +201,22 @@ inst_req
 inst_vanilla_cs_srv
 csgo_srv_init
 
-    if [ "$GAME_TYPE" == "1vs1" ]; then
-        csgo_1vs1
-fi
-    if [ "$GAME_TYPE" == "Diegel" ]; then
-        csgo_diegel
-fi
-    if [ "$GAME_TYPE" == "MM" ]; then
-        csgo_mm
-else
-    echo "ERROR: Wrong GAME_TYPE exiting..."
-    exit 1
-fi
+case "$GAME_TYPE" in
+    1vs1)
+     csgo_1vs1
+    ;;
 
+    Diegel)
+     csgo_diegel
+    ;;
+
+    MM)
+     csgo_mm
+    ;;
+
+    *)
+     echo "ERROR: Wrong GAME_TYPE exiting..."
+    exit 1
+esac
 
 exit 0
