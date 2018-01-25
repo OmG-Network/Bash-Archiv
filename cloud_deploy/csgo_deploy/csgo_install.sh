@@ -160,7 +160,7 @@ chown -cR $install_user_name $server_inst_dir && chmod -cR 770 $server_inst_dir
 chmod +x $server_inst_dir/srcds_run
 # Starting CSGO Server
 echo "### STARTING CSGO Server ###"
-screen -dmS CS_1vs1 su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 +game_type 0 +game_mode 0 +map aim_redline +exec server.cfg"
+screen -dmS CS_1vs1 su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 -ip 0.0.0.0 +game_type 0 +game_mode 0 +map aim_redline +exec server.cfg"
 }
 
 function csgo_diegel ()
@@ -175,7 +175,7 @@ chown -cR $install_user_name $server_inst_dir && chmod -cR 770 $server_inst_dir
 chmod +x $server_inst_dir/srcds_run
 # Starting CSGO Server
 echo "### STARTING CSGO Server ###"
-screen -dmS CS_Diegle su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 +game_type 0 +game_mode 1 +map aim_deagle7k +exec server.cfg"
+screen -dmS CS_Diegle su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 -ip 0.0.0.0 +game_type 0 +game_mode 1 +map aim_deagle7k +exec server.cfg"
 
 }
 
@@ -187,7 +187,7 @@ chown -cR $install_user_name $server_inst_dir && chmod -cR 770 $server_inst_dir
 chmod +x $server_inst_dir/srcds_run
 # Starting CSGO Server
 echo "### STARTING CSGO Server ###"
-screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 +game_type 0 +game_mode 1 +map de_cbble +exec server.cfg"
+screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 -ip 0.0.0.0 +game_type 0 +game_mode 1 +map de_cbble +exec server.cfg"
 }
 ############################################## End of Functions ##############################################
 
