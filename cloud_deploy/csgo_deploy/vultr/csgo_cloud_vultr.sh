@@ -49,7 +49,7 @@ apt install -y curl debconf libc6 lib32gcc1
     # Set User rights
     chown -cR $install_user_name $steamCMD && chmod -cR 770 $install_user_name $steamCMD
     # Clean up
-apt-get autoclean
+apt-get autoclean -y
 
 }
 
