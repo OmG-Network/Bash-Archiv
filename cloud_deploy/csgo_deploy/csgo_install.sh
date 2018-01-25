@@ -48,7 +48,7 @@ function inst_req ()
     # System Update
 apt update && apt upgrade -y
     # Install Req via APT
-apt install -y curl debconf libc6 lib32gcc1
+apt install -y curl debconf libc6 lib32gcc1 screen curl wget
     # Create User
     if [ ! -d $server_inst_dir ]; then
         mkdir $server_inst_dir
