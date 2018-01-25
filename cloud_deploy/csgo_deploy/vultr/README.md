@@ -10,7 +10,7 @@ Das tolle daran ist, es ist einfach möglich sich für ein paar Stunden einen Pr
 Das Script installiert einen 128 Tick CSGO Server und konfiguriert diesen, es werden Metamod und Sourcemod installiert, die Versionen lassen sich leicht anpassen. Zusätzlich werden je nach konfiguration plugins und maps installiert.
 Das Script bietet die möglichkeit drei unterschiedliche Server Typen bereitzustellen
 
-1. 1vs1 Wie der name schon sagt, handelt es sich um einen 1vs1 Server auf der Map aim_redline Weitere Maps können über die Console geladen werden. Diese Maps befinden sich noch im Maps Ordner (Alle Maps werden über einen FasDL Server bereitgestellt):
+1. 1vs1 Wie der name schon sagt, handelt es sich um einen 1vs1 Server auf der Map aim_redline Weitere Maps können über die Console geladen werden. Diese Maps befinden sich noch im Maps Ordner (Alle Maps werden über einen FastDL Server bereitgestellt):
 + aim_dust2
 + aim_map_classic
 + aim_dust_go
