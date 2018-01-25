@@ -200,5 +200,4 @@ case "$GAME_TYPE" in
     exit 1
 esac
 
-
 exit 0
