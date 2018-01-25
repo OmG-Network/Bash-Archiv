@@ -39,7 +39,7 @@ Unter <code>GAME_TYPE</code> muss einer der drei oben genannten Typen angegeben 
 <code>sv_setsteamaccount</code> Hier muss der [Game Server Token](https://steamcommunity.com/dev/managegameservers?l=german) eingefügt werden :heavy_exclamation_mark: Ohne diesen Token startet der Server NICHT !
 <br></br>
 Die Anderen Optionen sollten selbsterklärend sein, wenn nicht lass bitte die finger davon :boom:<p>
-(Kleiner Anriss, da man sich unter "<code>retry</code>" nicht viel vorstellen kann. Diese Option setzt die Wirderholungen fest, wie oft nach einem Fehlgeschlagenen CSGO Server Download erneut versucht weren soll diesen herunterzuladen.") 
+(Kleiner Anriss, da man sich unter "<code>retry</code>" nicht viel vorstellen kann. Diese Option setzt die Wirderholungen fest, wie oft nach einem Fehlgeschlagenen CSGO Server Download erneut versucht werden soll diesen herunterzuladen.") 
 ```bash
 # Download options
 export metamod="https://mms.alliedmods.net/mmsdrop/1.10/mmsource-1.10.7-git961-linux.tar.gz"
