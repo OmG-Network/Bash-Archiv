@@ -29,4 +29,4 @@ Ziel ist es einen Cloud Server mit diesem Script zu deployen, sodas man sich zum
 ## Unterstützte Betriebssysteme
 
 Momentan wird Ubuntu und Debian unterstützt.
-Vorraussetzungen an andere Distros: <code>apt</code>, <code>apt-get</code> und <code>dpkg</code> erfüllt deine Distro diese Vorgaben, kannst du in Zeile 31 <code>"Ubuntu"</code> oder <code>"Debian"</code> mit deinem Output des <code>LSB</code> Befehls austauschen. 
+Vorraussetzungen an andere Distros: <code>apt</code>, <code>curl</code>, <code>wget</code> und <code>dpkg</code> erfüllt deine Distro diese Vorgaben, kannst du in Zeile 31 <code>"Ubuntu"</code> oder <code>"Debian"</code> mit deinem Output des <code>LSB</code> Befehls austauschen. 
