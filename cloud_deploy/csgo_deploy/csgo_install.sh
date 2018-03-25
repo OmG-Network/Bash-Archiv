@@ -23,7 +23,7 @@ server_inst_dir=/opt/server
 install_user_name=csgo
 retry=5
 
-LSB=$(/usr/bin/lsb_release -i | awk '{ print $3 }')
+LSB=$(/usr/bin/lsb_release -si)
 WAN_IP=$(curl ipinfo.io/ip)
 ############################################## Start of Script ##############################################
 function check_root ()
