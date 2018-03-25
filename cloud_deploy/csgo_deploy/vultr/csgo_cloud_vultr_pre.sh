@@ -28,7 +28,7 @@ export LSB=$(/usr/bin/lsb_release -i | awk '{ print $3 }')
 
 # Start Script
 
-curl -sql https://raw.githubusercontent.com/OmG-Network/Bash-Archiv/master/cloud_deploy/csgo_deploy/csgo_cloud_vultr.sh | bash &
+curl -sql https://raw.githubusercontent.com/OmG-Network/Bash-Archiv/master/cloud_deploy/csgo_deploy/vultr/csgo_cloud_vultr.sh | bash &
 
 
 exit 0

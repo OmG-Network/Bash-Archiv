@@ -38,9 +38,10 @@ div {
         echo "There was an error uploading the file, please try again!";
     }
   }
+echo "<BR>\n";
 $row = exec('ls {MAP_FOLDER_PATH} | grep .bsp',$output,$error);
 while(list(,$row) = each($output)){
-echo $row, "<BR>\n";
+echo <div style="color:Tomato;">$row</div>, "<BR>\n";
 }
 if($error){
 echo "Error : $error<BR>\n";

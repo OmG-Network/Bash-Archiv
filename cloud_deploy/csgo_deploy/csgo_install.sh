@@ -9,6 +9,10 @@ hostname=""
 sv_password=""
 rcon_password=""
 sv_setsteamaccount=""
+# FastDL Upload Portal Settings
+fastdl_user=fastdl
+fastdl_passwd=fastdl
+php_max_upload=2048
 # Download options
 metamod="https://mms.alliedmods.net/mmsdrop/1.10/mmsource-1.10.7-git961-linux.tar.gz"
 sourcemod="https://sm.alliedmods.net/smdrop/1.8/sourcemod-1.8.0-git6040-linux.tar.gz"
@@ -19,8 +23,8 @@ server_inst_dir=/opt/server
 install_user_name=csgo
 retry=5
 
-LSB=$(/usr/bin/lsb_release -i | awk '{ print $3 }')
-
+LSB=$(/usr/bin/lsb_release -si)
+WAN_IP=$(curl ipinfo.io/ip)
 ############################################## Start of Script ##############################################
 function check_root ()
 {
@@ -48,7 +52,7 @@ function inst_req ()
     # System Update
 apt update && apt upgrade -y
     # Install Req via APT
-apt install -y curl debconf libc6 lib32gcc1 screen curl wget
+apt install -y curl debconf libc6 lib32gcc1 lib32stdc++6 screen curl wget apache2 php libapache2-mod-php
     # Create User
     if [ ! -d $server_inst_dir ]; then
         mkdir $server_inst_dir
@@ -95,6 +99,67 @@ function inst_vanilla_cs_srv ()
     rm -rf $tmp_dir
 }
 
+function init_fastdl ()
+{
+    # Create fastdl dir
+    if [ ! -d /var/www/fastdl ]; then
+        mkdir /var/www/fastdl
+    fi
+    if [ ! -d /var/www/fastdl/upload ]; then
+        mkdir /var/www/fastdl/upload
+    fi
+    # Create fastdl apache2 config file
+    if [ -a /etc/apache2/sites-available/fastdl.conf ]; then
+        a2dissite fastdl.conf
+        rm /etc/apache2/sites-available/fastdl.conf
+    fi
+    echo "<VirtualHost *:80>" >> /etc/apache2/sites-available/fastdl.conf
+    echo "        ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/fastdl.conf
+    echo "        DocumentRoot /var/www/fastdl" >> /etc/apache2/sites-available/fastdl.conf
+    echo "        LogLevel info" >> /etc/apache2/sites-available/fastdl.conf
+    echo "        <Directory /var/www/fastdl>" >> /etc/apache2/sites-available/fastdl.conf
+    echo "                Options Indexes FollowSymLinks MultiViews" >> /etc/apache2/sites-available/fastdl.conf
+    echo "                AllowOverride All" >> /etc/apache2/sites-available/fastdl.conf
+    echo "                Order allow,deny" >> /etc/apache2/sites-available/fastdl.conf
+    echo "                allow from all" >> /etc/apache2/sites-available/fastdl.conf
+    echo "        </Directory>" >> /etc/apache2/sites-available/fastdl.conf
+    echo "        ErrorLog "'${APACHE_LOG_DIR}'"/fastdl_error.log" >> /etc/apache2/sites-available/fastdl.conf
+    echo "        CustomLog "'${APACHE_LOG_DIR}'"/fastdl_access.log combined" >> /etc/apache2/sites-available/fastdl.conf
+    echo "</VirtualHost>" >> /etc/apache2/sites-available/fastdl.conf
+    # Create .htaccess file
+    echo "AuthType Basic" >> /var/www/fastdl/upload/.htaccess
+    echo "AuthUserFile /etc/apache2/.passwd" >> /var/www/fastdl/upload/.htaccess
+    echo "AuthName "fastdl"" >> /var/www/fastdl/upload/.htaccess
+    echo "order deny,allow" >> /var/www/fastdl/upload/.htaccess
+    echo "allow from all" >> /var/www/fastdl/upload/.htaccess
+    echo "require valid-user" >> /var/www/fastdl/upload/.htaccess
+    echo "" >> /var/www/fastdl/upload/.htaccess
+    echo "php_value  upload_max_filesize ${php_max_upload}M" >> /var/www/fastdl/upload/.htaccess
+    echo "php_value post_max_size ${php_max_upload}M" >> /var/www/fastdl/upload/.htaccess
+
+    # Deactivate Default apache2 conf
+    a2dissite 000-default.conf
+    # Activate fastdl apache2 conf
+    a2ensite fastdl
+    # Restart apache2 server
+    /etc/init.d/apache2 restart
+    # Create fastdl user with password
+    htpasswd -cbB /etc/apache2/.passwd $fastdl_user $fastdl_passwd
+
+    # Create Upload PHP
+    wget -P /var/www/fastdl/upload/ "https://raw.githubusercontent.com/OmG-Network/Bash-Archiv/master/cloud_deploy/csgo_deploy/dependencies/index.php"
+    sed -i "s/{MAP_FOLDER_PATH}/${server_inst_dir//\//\\/}\/csgo\/maps\//g" /var/www/fastdl/upload/index.php
+
+    # Link Map folder
+    if [ ! -d /var/www/fastdl/csgo ]; then
+        mkdir /var/www/fastdl/csgo
+    fi    
+    ln -s $server_inst_dir/csgo/maps/ /var/www/fastdl/csgo/maps
+    ln -s $server_inst_dir/csgo/materials/ /var/www/fastdl/csgo/materials
+    ln -s $server_inst_dir/csgo/models/ /var/www/fastdl/csgo/models
+    ln -s $server_inst_dir/csgo/sound/ /var/www/fastdl/csgo/sound   
+}
+
 function csgo_srv_init ()
 {
 # Inst Metamod & Sourcemod
@@ -116,8 +181,7 @@ echo sv_password $sv_password >> $server_inst_dir/csgo/cfg/server.cfg
 echo rcon_password "$rcon_password" >> $server_inst_dir/csgo/cfg/server.cfg
 echo  >> $server_inst_dir/csgo/cfg/server.cfg
 echo // Network Configuration >> $server_inst_dir/csgo/cfg/server.cfg
-echo sv_loadingurl "https://aimb0t.husos.wtf" >> $server_inst_dir/csgo/cfg/server.cfg
-echo sv_downloadurl '"http://fastdl.omg-network.de/csgo/csgo/"' >> $server_inst_dir/csgo/cfg/server.cfg
+echo sv_downloadurl '"'"http://$WAN_IP/csgo/"'"' >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_allowdownload 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_allowupload 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo net_maxfilesize 64 >> $server_inst_dir/csgo/cfg/server.cfg
@@ -144,6 +208,14 @@ echo "### ADD ESL Config ###"
 curl -sqL $esl_cfg | tar xf - -C $server_inst_dir/csgo/cfg/
 }
 
+function srv_permission ()
+{
+    # Set permissions
+    echo "### SET Permissions for $install_user_name"
+    chown -cR $install_user_name:www-data $server_inst_dir && chmod -cR 775 $server_inst_dir    
+    chmod +x $server_inst_dir/srcds_run
+}
+
 function csgo_1vs1 ()
 {
 # Download Maps
@@ -154,13 +226,11 @@ wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/
 wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_dust_go.bsp"
 wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_map.bsp"
 wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_prac_ak47.bsp"
-# Set permissions
-echo "### SET Permissions for $install_user_name"
-chown -cR $install_user_name $server_inst_dir && chmod -cR 770 $server_inst_dir
-chmod +x $server_inst_dir/srcds_run
+#Set permissions
+srv_permission
 # Starting CSGO Server
 echo "### STARTING CSGO Server ###"
-screen -dmS CS_1vs1 su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 -ip 0.0.0.0 +game_type 0 +game_mode 0 +map aim_redline +exec server.cfg"
+screen -dmS CS_1vs1 su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -usercon -tickrate 128 -maxplayers 10 -nobots -ip 0.0.0.0 -pingboost 3 +game_type 0 +game_mode 0 +map aim_redline +exec server.cfg"
 }
 
 function csgo_diegel ()
@@ -169,25 +239,21 @@ function csgo_diegel ()
 wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/aim_deagle7k.bsp"
 # Downloading only HS Plugin
 wget -P $server_inst_dir/csgo/addons/sourcemod/plugins "https://raw.githubusercontent.com/Bara/OnlyHS/master/addons/sourcemod/plugins/onlyhs.smx"
-# Set permissions
-echo "### SET Permissions for $install_user_name"
-chown -cR $install_user_name $server_inst_dir && chmod -cR 770 $server_inst_dir
-chmod +x $server_inst_dir/srcds_run
+#Set permissions
+srv_permission
 # Starting CSGO Server
 echo "### STARTING CSGO Server ###"
-screen -dmS CS_Diegle su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 -ip 0.0.0.0 +game_type 0 +game_mode 1 +map aim_deagle7k +exec server.cfg"
+screen -dmS CS_Diegle su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -usercon -tickrate 128 -maxplayers 10 -nobots -ip 0.0.0.0 -pingboost 3 +game_type 0 +game_mode 1 +map aim_deagle7k +exec server.cfg"
 
 }
 
 function csgo_mm ()
 {
-# Set permissions
-echo "### SET Permissions for $install_user_name"
-chown -cR $install_user_name $server_inst_dir && chmod -cR 770 $server_inst_dir
-chmod +x $server_inst_dir/srcds_run
+#Set permissions
+srv_permission
 # Starting CSGO Server
 echo "### STARTING CSGO Server ###"
-screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -autoupdate -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 -ip 0.0.0.0 +game_type 0 +game_mode 1 +map de_cbble +exec server.cfg"
+screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -usercon -tickrate 128 -maxplayers 10 -nobots -ip 0.0.0.0 -pingboost 3 +game_type 0 +game_mode 1 +map de_cbble +exec server.cfg"
 }
 ############################################## End of Functions ##############################################
 
@@ -197,6 +263,7 @@ check_root
 check_distro
 inst_req
 inst_vanilla_cs_srv
+init_fastdl
 csgo_srv_init
 
 case "$GAME_TYPE" in

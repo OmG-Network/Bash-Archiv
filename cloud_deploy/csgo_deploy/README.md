@@ -1,32 +1,43 @@
 # CSGO Cloud Server Deploy
 
-### **Dies ist noch kein fertriger Release, dieses Script richtet sich bisher nur an erfahrene User !**
-
 ## Was tut das Script ?
 
-Nach dem Start wird ein CSGO Server installiert, dabei kann man über die Variable <code>GAME_MODE</code> angeben wie der CSGO Server konfigurtiert werden soll. Das besondere daran ist, dass die Installation und konfiguration komplett unbeaufsichtigt erfolgen kann. Daher ist das Script bestens geeignet um in Cloud ungebungen eingesetzt zu werden.
+Dieses Script installiert einen 128 Tick CSGO Server, dabei kann man unter mehreren Spielmodies wählen **1vs1**, **Diegel only HS** und **Community MM**.<p>Ziel ist es einen CSGO Server mit diesem Script bereitzustellen, ohne viel Zeit mit der Installation / Konfiguration des Server zu stecken.<p>Dieses Script ist dafür konzipiert um auf einem Cloud Server ausgeführt zu werden. So kann man sich für ein paar Stunden einen Leistungsstarken CSGO Server anschaffen und das für nur ein paar Cents.
 
-Ziel ist es einen Cloud Server mit diesem Script zu deployen, sodas man sich zum schluss nur noch zum Server verbinden muss.
+## Was bietet das Script für Funktionen ?
+Die Einstellungs Parameter werden weiter unten im Detail beschrieben.<p>
+Das Script installiert einen CSGO Server ohne Benutzereingabe, nach dem das Script konfiguriert und gestartet wurde, verläuft die Restlich Installation komplett im Hintergrund ab.<p>Der CSGO Server wird nach der Installation automatisch gestartet.<p>Es werden auch eigene Maps unterstützt. Um eine eigene Map auf den Server zu laden, wurde beim installieren eine Upload Seite eingerichtet diese ist unter ```http://(Eure Server IP)/upload``` zu erreichen (Diese Seite ist per Login gesichert).<p>Auf dieser Seite können zum einen neue Maps hochgeladen werden und zum anderen bietet die Seite auch eine Übersicht der Maps die bereits vorhanden sind. Alle Maps, die hochgeladen werden, können automatisch per FastDL bezogen werden. Workshop Maps oder Kollektionen werden momentan noch nicht unterstützt
 
 ## Konfigurierbare Parameter
 
-<code>GAME_TYPE</code> gibt an wie der Server konfiguriert werden soll. Zur auswahl stehen 1vs1, Diegel oder MM (Competitive). Zusätzlich liegen im cfg Verzeichniss alle ESL CFGs, diese können nachträglich geladen werden.
+Sind Parameter, die direkt im Script gesetzt werden müssen, um den CSGO Server entsprechend konfigurieren zu können.
+Folgende Einstellungen gibt es:
++ **Game Server Options**
+    + **GAME_TYPE** : Gibt an wie der Server konfiguriert werden soll. Zur auswahl stehen ```1vs1```, ```Diegel``` oder ```MM``` (Competitive). Zusätzlich liegen im cfg Verzeichniss alle ESL CFGs, diese können nachträglich über RCON geladen werden.
+    + **hostname** : Ist der Wert für den CSGO Server Hostname, dieser Name ist im Server Browser (CSGO) sichtbar.
+    + **sv_password** : Setzt ein CSGO Server Password, dass benötigt wird um sich auf den Server zu verbinden. Kein Passwort entspricht dem Wert ```""```
 
-<code>steamCMD</code> Installationspfad von SteamCMD (Wird benötigt um den CSGO Server herunterzuladen) Standartwert: <code>/opt/steamcmd</code>
++ **FastDL Upload Portal**
+    + **fastdl_user** : Gibt den Benutzernamen für das Coustom Map Upload Portal an. ```http://(Server IP)/upload```
+    + **fastdl_passwd** : Gibt das Passwort für den **fastdl_user** an.
+    + **php_max_upload** : Setzt die maximale Upload größe in MB für einzelne Map Dateien (Veränderte PHP Optionen ```upload_max_filesize``` und ```post_max_size```).
++ **Download Options**
+    + **metamod/sourcemod** : Diese Links können durch andere Releases ausgetauscht werden. __Dabei ist zu beachten, dass es sich um ```.tar.gz``` Archive handelt !__
+    + **esl_cfg** : Dieses ```tar``` Archiv einthält die ESL CFG Daten, hier kann ein anderes Archiv angegeben werden, der Inhalt wird nach ```csgo/cfg``` entpackt. Zu beachten, dass das Archiv im ```tar``` Format ist und es darf keine Ordnerstruktur enthalten sein.
++ **Install Options**
+    + **steamCMD** : Installationspfad von SteamCMD (Wird benötigt um den CSGO Server herunterzuladen) Standardverzeichniss: ```/opt/steamcmd```
 
-<code>server_inst_dir</code> Installationspfad vom CSGO Server der Ordner wird im installationsprozess erstellt, ein evtl. vorhandener Ordner wird überschrieben ! Standartwert: <code>/opt/server</code>
+    + **server_inst_dir** : Installationspfad vom CSGO Server der Ordner wird im installationsprozess erstellt. __Achtung ein evtl. vorhandener Ordner wird überschrieben !__ Standardverzeichniss: ```/opt/server```
 
-<code>install_user_name</code> Es wird ein User erstellt um mit diesem den Server über <code>steamCMD</code> herunterzuladen und um diesen später zu starten. Hier kann ein bestehender Benutzer angegeben werden (bitte nicht root ._. ) diser wird auch nicht verändert. Es sollte aber ein User vom Script erstellt werden, dieser User wird mit folgenden Eigenschaften erstelt: Shell: <code>/usr/sbin/nologin</code> HomeDIR entspricht dem <code>steamCMD</code> Installationspfad
+    + **install_user_name** : Der User in dessen Kontext steamCMD (Server Download) und der CSGO Server läuft. Hier kann ein bestehender Benutzer angegeben werden (Nicht empfohlen) diser wird auch nicht verändert. Es sollte aber ein User vom Script erstellt werden, da dieser User wird mit folgenden Eigenschaften erstelt wird: Shell: ```/usr/sbin/nologin``` HomeDIR entspricht dem ```steamCMD``` Installationspfad
 
-<code>retry</code> Diese Variable enthält die maximale wiederholungen des Server Downloads, ist diese Zahl erreicht bricht das Script ab. Sollte dies der fall sein kann unter <code>/tmp/tmp.(dieser teil wird generiert)/log</code> nach einem fehler gesucht werden.
+    + **retry** : Diese Variable gibt an, die oft nach einem Fehlgeschlagenen Download versucht werden soll, den Server noch einmal herunterlzuladen. Ist diese Zahl überschritten, wird der Vorgang abgebrochen. Sollte dies der fall sein kann unter ```/tmp/tmp.(dieser teil wird generiert)/log``` nach einem fehler gesucht werden.
 
-<code>metamod</code>/<code>sourcemod</code> Diese Links können durch andere Releases ausgetauscht werden, zu achten ist aber auch die Dateiendung es werden nur <code>tar.gz</code> Dateien entpackt !
-
-<code>esl_cfg</code> Diese tar Datei einthält die CFG Daten, hier kann ein anderes Archiv angegeben werden, der Inhalt wird nach <code>csgo/cfg</code> entpackt. Zu beachten, das Archiv muss im tar Format sein und darf keine Ordnerstruktur enthalten.
-
-<code>LSB</code> wird verwendet um die Aktuell verwendete Distro zu erfassen, auf Ubuntu und Debian Systemen gibt dieser Befehl den Distro namen zurück.
++ **Optional**
+    + **LSB** : Wird verwendet um die Aktuell verwendete Distro zu erfassen, auf Ubuntu und Debian Systemen gibt dieser Befehl den Distro namen zurück.
+    + **WAN_IP** : Mittels curl wird die aktuelle WAN IP ermittelt, um diese dann in der ```server.cfg``` als FastDL Server anzugeben.
 
 ## Unterstützte Betriebssysteme
 
-Momentan wird Ubuntu und Debian unterstützt.
-Vorraussetzungen an andere Distros: <code>apt</code>, <code>curl</code>, <code>wget</code> und <code>dpkg</code> erfüllt deine Distro diese Vorgaben, kannst du in Zeile 31 <code>"Ubuntu"</code> oder <code>"Debian"</code> mit deinem Output des <code>LSB</code> Befehls austauschen. 
+Momentan wird **Ubuntu** ab 14.04 LTS und **Debian** ab Version 8 unterstützt.
+Vorraussetzungen an andere Distros: apt, apt-get und dpkg erfüllt deine Distro diese Vorgaben, kannst du den Distro check deaktivieren, dazu bei ```# Call Functions``` --> ```check_distro``` entweder mit einem ```#``` auskommentieren oder die Zeile komplett entfernen. 
