@@ -230,7 +230,7 @@ wget -P $server_inst_dir/csgo/maps "http://fastdl.omg-network.de/csgo/csgo/maps/
 srv_permission
 # Starting CSGO Server
 echo "### STARTING CSGO Server ###"
-screen -dmS CS_1vs1 su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 +game_type 0 +game_mode 0 +map aim_redline +exec server.cfg"
+screen -dmS CS_1vs1 su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -usercon -tickrate 128 -maxplayers 10 -nobots -ip 0.0.0.0 -pingboost 3 +game_type 0 +game_mode 0 +map aim_redline +exec server.cfg"
 }
 
 function csgo_diegel ()
@@ -243,7 +243,7 @@ wget -P $server_inst_dir/csgo/addons/sourcemod/plugins "https://raw.githubuserco
 srv_permission
 # Starting CSGO Server
 echo "### STARTING CSGO Server ###"
-screen -dmS CS_Diegle su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 +game_type 0 +game_mode 1 +map aim_deagle7k +exec server.cfg"
+screen -dmS CS_Diegle su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -usercon -tickrate 128 -maxplayers 10 -nobots -ip 0.0.0.0 -pingboost 3 +game_type 0 +game_mode 1 +map aim_deagle7k +exec server.cfg"
 
 }
 
@@ -253,7 +253,7 @@ function csgo_mm ()
 srv_permission
 # Starting CSGO Server
 echo "### STARTING CSGO Server ###"
-screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -usercon -tickrate 128 -maxplayers 10 -nobots -pingboost 3 +game_type 0 +game_mode 1 +map de_cbble +exec server.cfg"
+screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game csgo -console -usercon -tickrate 128 -maxplayers 10 -nobots -ip 0.0.0.0 -pingboost 3 +game_type 0 +game_mode 1 +map de_cbble +exec server.cfg"
 }
 ############################################## End of Functions ##############################################
 
