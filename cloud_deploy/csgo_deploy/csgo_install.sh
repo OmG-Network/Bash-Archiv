@@ -181,7 +181,7 @@ echo sv_password $sv_password >> $server_inst_dir/csgo/cfg/server.cfg
 echo rcon_password "$rcon_password" >> $server_inst_dir/csgo/cfg/server.cfg
 echo  >> $server_inst_dir/csgo/cfg/server.cfg
 echo // Network Configuration >> $server_inst_dir/csgo/cfg/server.cfg
-echo sv_downloadurl "http://$WAN_IP/csgo/" >> $server_inst_dir/csgo/cfg/server.cfg
+echo sv_downloadurl '"'"http://$WAN_IP/csgo/"'"' >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_allowdownload 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo sv_allowupload 0 >> $server_inst_dir/csgo/cfg/server.cfg
 echo net_maxfilesize 64 >> $server_inst_dir/csgo/cfg/server.cfg
