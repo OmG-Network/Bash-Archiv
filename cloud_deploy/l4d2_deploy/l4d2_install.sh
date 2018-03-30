@@ -170,8 +170,7 @@ function l4d2_srv_init ()
     echo rcon_password "$rcon_password" >> $server_inst_dir/left4dead2/cfg/server.cfg
     echo  >> $server_inst_dir/left4dead2/cfg/server.cfg
     echo // Network Configuration >> $server_inst_dir/left4dead2/cfg/server.cfg
-    echo sv_loadingurl "https://aimb0t.husos.wtf" >> $server_inst_dir/left4dead2/cfg/server.cfg
-    echo sv_downloadurl "http://$WAN_IP/l4d2/" >> $server_inst_dir/left4dead2/cfg/server.cfg
+    echo sv_downloadurl '"'"http://$WAN_IP/l4d2/"'"' >> $server_inst_dir/left4dead2/cfg/server.cfg
     echo sv_allowdownload 0 >> $server_inst_dir/left4dead2/cfg/server.cfg
     echo sv_allowupload 0 >> $server_inst_dir/left4dead2/cfg/server.cfg
     echo net_maxfilesize 64 >> $server_inst_dir/left4dead2/cfg/server.cfg
