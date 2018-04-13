@@ -1,4 +1,4 @@
-# Vultr CSGO Cloud Deploy
+# [DISCONTINUED] Vultr CSGO Cloud Deploy
 
 ## Und was kann das ?
 
