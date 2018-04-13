@@ -207,6 +207,23 @@ screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/src
 ############################################## End of Functions ##############################################
 
 # Main Starts here....
+case "$GAME_TYPE" in
+    Murder)
+     echo "Installing Murder"
+    ;;
+
+    Pedo)
+     echo "Installing Pedo"
+    ;;
+
+    TTT)
+     echo "Installing TTT"
+    ;;
+
+    *)
+     echo "ERROR: Wrong GAME_TYPE exiting..."
+    exit 1
+esac
 # Call Functions
 check_root
 check_distro
