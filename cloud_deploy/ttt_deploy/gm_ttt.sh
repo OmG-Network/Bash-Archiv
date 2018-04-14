@@ -5,19 +5,19 @@
 
 # Game Server options
 GAME_TYPE=TTT    # Murder (Disable) / TTT / Pedo (Disable)
-hostname="A Pleb [TTT] Server"
-sv_password="Melon123"
-rcon_password="wixxerS"
-sv_setsteamaccount="13128A301F492594471C9EABBA81561C"
-workshop_api_key="90F0AFBD5CCCF7260B636719567C3265"
+hostname=""
+sv_password=""
+rcon_password=""
+sv_setsteamaccount=""
+workshop_api_key=""
 # FastDL Upload Portal Settings
 fastdl_user=fastdl
 fastdl_passwd=fastdl
 php_max_upload=2048
 # Download options
 gm_textures="http://fastdl.omg-network.de/gm/textures/textures.tar.gz"
-workshop_map_id="246369972"
-workshop_collection_id="515223891"
+workshop_map_id=""
+workshop_collection_id=""
 # Install options
 steamCMD=/opt/steamcmd
 server_inst_dir=/opt/server
