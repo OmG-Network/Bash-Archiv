@@ -247,6 +247,12 @@ function gm_ttt ()
 {
 #Set permissions
 srv_permission
+# Create Crontab
+if [ -a /tmp/ttt_crontab ]; then
+     rm /tmp/ttt_crontab
+fi
+echo @reboot screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game garrysmod -console -maxplayers 16 -ip 0.0.0.0 -pingboost 3 -authkey $workshop_api_key +gamemode terrortown +host_workshop_collection $workshop_collection_id +host_workshop_map $workshop_map_id +exec server.cfg" >> /tmp/ttt_crontab
+crontab /tmp/ttt_crontab
 # Starting TTT Server
 echo "### STARTING TTT Server ###"
 screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/srcds_run -game garrysmod -console -maxplayers 16 -ip 0.0.0.0 -pingboost 3 -authkey $workshop_api_key +gamemode terrortown +host_workshop_collection $workshop_collection_id +host_workshop_map $workshop_map_id +exec server.cfg"
