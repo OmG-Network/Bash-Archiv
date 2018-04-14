@@ -4,20 +4,20 @@
 ## 2018-04-13
 
 # Game Server options
-GAME_TYPE=    # Murder (Disable) / TTT / Pedo (Disable)
-hostname=""
-sv_password=""
-rcon_password=""
-sv_setsteamaccount=""
-workshop_api_key=""
+GAME_TYPE=TTT    # Murder (Disable) / TTT / Pedo (Disable)
+hostname="A Pleb [TTT] Server"
+sv_password="Melon123"
+rcon_password="wixxerS"
+sv_setsteamaccount="13128A301F492594471C9EABBA81561C"
+workshop_api_key="90F0AFBD5CCCF7260B636719567C3265"
 # FastDL Upload Portal Settings
 fastdl_user=fastdl
 fastdl_passwd=fastdl
 php_max_upload=2048
 # Download options
 gm_textures="http://fastdl.omg-network.de/gm/textures/textures.tar.gz"
-workshop_map_id=""
-workshop_collection_id=""
+workshop_map_id="246369972"
+workshop_collection_id="515223891"
 # Install options
 steamCMD=/opt/steamcmd
 server_inst_dir=/opt/server
@@ -164,11 +164,14 @@ function init_fastdl ()
 
 function ttt_srv_init ()
 {
+
 # Create Server CFG
 echo "### UPDATE Server CFG ###"
 if [ -a $server_inst_dir/garrysmod/cfg/server.cfg ]; then
     rm $server_inst_dir/garrysmod/cfg/server.cfg
 fi
+
+# Base Config
 echo // Base Configuration >> $server_inst_dir/garrysmod/cfg/server.cfg
 echo hostname $hostname >> $server_inst_dir/garrysmod/cfg/server.cfg
 echo sv_password $sv_password >> $server_inst_dir/garrysmod/cfg/server.cfg
@@ -180,6 +183,50 @@ echo sv_allowdownload 0 >> $server_inst_dir/garrysmod/cfg/server.cfg
 echo sv_allowupload 0 >> $server_inst_dir/garrysmod/cfg/server.cfg
 echo net_maxfilesize 64 >> $server_inst_dir/garrysmod/cfg/server.cfg
 echo sv_setsteamaccount $sv_setsteamaccount >> $server_inst_dir/garrysmod/cfg/server.cfg
+
+# TTT Game Settings
+echo //Prepare >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_preptime_seconds "10" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_firstpreptime "30" >> $server_inst_dir/garrysmod/cfg/server.cfg
+
+echo //Roundlength >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_roundtime_minutes "5" >> $server_inst_dir/garrysmod/cfg/server.cfg
+
+echo //Switching >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_round_limit "99" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo //Traitor & Detectives >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_detective_karma_min "800" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_detective_min_players "4" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_traitor_pct "0.25" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_traitor_max "2" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_detective_max "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo //Voicechat >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_voice_drain "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+
+echo //Gameplay >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_minimum_players "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_postround_dm "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_ragdoll_pinning "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_ragdoll_pinning_innocents "0" >> $server_inst_dir/garrysmod/cfg/server.cfg
+
+echo //Maps >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_use_weapon_spawn_scripts "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+
+echo //Credits >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_credits_starting "2" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_credits_award_size "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_credits_detectivekill "2" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_det_credits_starting "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_det_credits_traitorkill "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_det_credits_traitordead "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+
+echo // Props >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_spec_prop_control "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_spec_prop_base "15" >> $server_inst_dir/garrysmod/cfg/server.cfg
+
+echo //Admin >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_idle_limit "1800" >> $server_inst_dir/garrysmod/cfg/server.cfg
+echo ttt_detective_hats "1" >> $server_inst_dir/garrysmod/cfg/server.cfg
 
 # Download Models & Textures & Maps
 curl -sqL $gm_textures | tar xfvz - -C $server_inst_dir/garrysmod/addons/
@@ -207,23 +254,6 @@ screen -dmS CS_MM su $install_user_name --shell /bin/sh -c "$server_inst_dir/src
 ############################################## End of Functions ##############################################
 
 # Main Starts here....
-case "$GAME_TYPE" in
-    Murder)
-     echo "Installing Murder"
-    ;;
-
-    Pedo)
-     echo "Installing Pedo"
-    ;;
-
-    TTT)
-     echo "Installing TTT"
-    ;;
-
-    *)
-     echo "ERROR: Wrong GAME_TYPE exiting..."
-    exit 1
-esac
 # Call Functions
 check_root
 check_distro
