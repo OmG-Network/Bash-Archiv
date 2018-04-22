@@ -16,6 +16,7 @@ Folgende Einstellungen gibt es:
     + **GAME_TYPE** : Gibt an wie der Server konfiguriert werden soll. Zur auswahl stehen ```1vs1```, ```Diegel``` oder ```MM``` (Competitive). Zusätzlich liegen im cfg Verzeichniss alle ESL CFGs, diese können nachträglich über RCON geladen werden.
     + **hostname** : Ist der Wert für den CSGO Server Hostname, dieser Name ist im Server Browser (CSGO) sichtbar.
     + **sv_password** : Setzt ein CSGO Server Password, dass benötigt wird um sich auf den Server zu verbinden. Kein Passwort entspricht dem Wert ```""```
+    + **sv_steamaccount** : Hier muss der zugehörige Server Token eigetragen werden, ohne diesen Token kann nur lokal auf den Server zugegriffen werden. Einen solcher Token kann [hier](https://steamcommunity.com/dev/managegameservers) erstellt werden. 
 
 + **FastDL Upload Portal**
     + **fastdl_user** : Gibt den Benutzernamen für das Coustom Map Upload Portal an. ```http://(Server IP)/upload```
