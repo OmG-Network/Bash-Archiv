@@ -16,7 +16,7 @@ Das einbinden über <code>cron</code> ist möglich.
 
 ## Cloud Deploy
 
-Könne als ein eigenes Repository gesehen werden, hier werden alle Cloud Server Scripts aingestellt, auszeichen tuen diese sich, durch die tatsache das sie silent ausgeführt werden. Und somit ein "One Klick" Deploy möglich ist.<p>
+Könne als ein eigenes Repository gesehen werden, hier werden alle Cloud Server Scripts eingestellt. "One Klick" Deploy ist möglich ist.<p>
 Bisher eingestellte Scripts:<p>
 + Standard Deploy (Systemvorbereitung) 
 + CSGO Deploy ("One Klick" CSGO Server installer)
